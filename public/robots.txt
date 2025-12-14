@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://interest-calcu.web.app/sitemap.xml
