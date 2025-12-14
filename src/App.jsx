@@ -10,6 +10,9 @@ import { calculateSavings, calculateLoan } from './utils/calculate';
 import { Calculator, Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
+import { analytics } from './firebase';
+import { logEvent } from 'firebase/analytics';
+
 function App() {
   const [activeTab, setActiveTab] = useState('savings');
 
@@ -32,6 +35,18 @@ function App() {
 
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
+
+  // Analytics: Track tab changes
+  useEffect(() => {
+    if (analytics) {
+      logEvent(analytics, 'screen_view', {
+        firebase_screen: activeTab,
+        screen_name: activeTab
+      });
+      // Custom event for tab switch
+      logEvent(analytics, 'tab_change', { tab: activeTab });
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     if (activeTab === 'savings') {
@@ -67,6 +82,14 @@ function App() {
         link.download = `Fin-Sight-Report-${new Date().toISOString().slice(0, 10)}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
+
+        // Analytics: Track download
+        if (analytics) {
+          logEvent(analytics, 'download_report', {
+            type: activeTab,
+            params: activeTab === 'savings' ? savingsParams : loanParams
+          });
+        }
       } catch (err) {
         console.error('Failed to capture image:', err);
         alert('이미지 저장 중 오류가 발생했습니다.');
