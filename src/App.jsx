@@ -122,7 +122,18 @@ function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* ... (Tabs) */}
+        <div className="text-center mb-10 space-y-4">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+            당신의 금융, <span className="text-blue-600">Fin-Sight</span>로 꿰뚫어보세요
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            복잡한 이자 계산과 대출 상환 스케줄, 더 이상 머리 아프게 고민하지 마세요.<br className="hidden sm:block" />
+            Fin-Sight는 예금, 적금, 대출 등 다양한 금융 상품의 수익과 비용을 <br className="hidden sm:block" />
+            한눈에 파악할 수 있도록 돕는 스마트한 시뮬레이션 도구입니다.
+          </p>
+        </div>
+
+        {/* Tabs */}
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
