@@ -6,8 +6,9 @@ import { InterestChart } from './components/InterestChart';
 import { AmortizationTable } from './components/AmortizationTable';
 import { FinancialGuide } from './components/FinancialGuide';
 import { Footer } from './components/Footer';
+import { AdPickModal } from './components/AdPickModal';
 import { calculateSavings, calculateLoan } from './utils/calculate';
-import { Calculator, Download } from 'lucide-react';
+import { Calculator, Download, Lock } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 import { analytics } from './firebase';
@@ -15,6 +16,8 @@ import { logEvent } from 'firebase/analytics';
 
 function App() {
   const [activeTab, setActiveTab] = useState('savings');
+  const [hasClickedAd, setHasClickedAd] = useState(false);
+  const [showAdModal, setShowAdModal] = useState(false);
 
   const [savingsParams, setSavingsParams] = useState({
     type: 'savings', // savings | deposit
@@ -35,6 +38,14 @@ function App() {
 
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
+
+  // Check if user has clicked ad in this session
+  useEffect(() => {
+    const adClickedInSession = sessionStorage.getItem('adClicked');
+    if (adClickedInSession === 'true') {
+      setHasClickedAd(true);
+    }
+  }, []);
 
   // Analytics: Track tab changes
   useEffect(() => {
@@ -68,6 +79,19 @@ function App() {
       setResult(res);
     }
   }, [savingsParams, loanParams, activeTab]);
+
+  const handleAdClick = () => {
+    setHasClickedAd(true);
+    sessionStorage.setItem('adClicked', 'true');
+
+    // Analytics: Track ad click
+    if (analytics) {
+      logEvent(analytics, 'ad_click', {
+        ad_provider: 'adpick',
+        timestamp: new Date().toISOString()
+      });
+    }
+  };
 
   const handleDownload = async () => {
     if (resultRef.current) {
@@ -152,26 +176,61 @@ function App() {
 
           {/* Right: Results (Wrapped for Capture) */}
           <section className="w-full lg:w-2/3 space-y-6" ref={resultRef}>
-            <ResultCard mode={activeTab} result={result} />
+            {!hasClickedAd ? (
+              /* Locked State - Show before ad click */
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center space-y-6">
+                <div className="mx-auto w-20 h-20 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center">
+                  <Lock className="w-10 h-10 text-gray-500" />
+                </div>
 
-            {result && result.chartData && (
-              <InterestChart mode={activeTab} data={result.chartData} />
-            )}
+                <div className="space-y-3">
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    계산 결과가 준비되었습니다
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed max-w-md mx-auto">
+                    무료로 서비스를 이용하시려면<br />
+                    광고를 한 번만 클릭해주세요 🙏
+                  </p>
+                </div>
 
-            {activeTab === 'loan' && result && result.schedule && (
-              <AmortizationTable schedule={result.schedule} />
-            )}
+                <button
+                  onClick={() => setShowAdModal(true)}
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  <Lock className="w-5 h-5" />
+                  결과 보기 (광고 클릭 필요)
+                </button>
 
-            {activeTab === 'savings' && result && result.chartData && (
-              <div className="bg-blue-50/50 p-4 rounded-xl text-sm text-gray-600">
-                <p>ℹ️ 본 계산 결과는 월 단위 계산을 기준으로 하며, 실제 금융기관의 일할 계산 방식과는 차이가 있을 수 있습니다.</p>
+                <p className="text-xs text-gray-500 leading-relaxed max-w-sm mx-auto">
+                  광고 수익으로 서비스를 무료로 제공하고 있습니다.<br />
+                  여러분의 작은 클릭이 큰 도움이 됩니다 💙
+                </p>
               </div>
-            )}
+            ) : (
+              /* Unlocked State - Show after ad click */
+              <>
+                <ResultCard mode={activeTab} result={result} />
 
-            {/* Watermark for image */}
-            <div className="hidden print-shown text-center text-gray-400 text-sm pt-4">
-              Created by Fin-Sight
-            </div>
+                {result && result.chartData && (
+                  <InterestChart mode={activeTab} data={result.chartData} />
+                )}
+
+                {activeTab === 'loan' && result && result.schedule && (
+                  <AmortizationTable schedule={result.schedule} />
+                )}
+
+                {activeTab === 'savings' && result && result.chartData && (
+                  <div className="bg-blue-50/50 p-4 rounded-xl text-sm text-gray-600">
+                    <p>ℹ️ 본 계산 결과는 월 단위 계산을 기준으로 하며, 실제 금융기관의 일할 계산 방식과는 차이가 있을 수 있습니다.</p>
+                  </div>
+                )}
+
+                {/* Watermark for image */}
+                <div className="hidden print-shown text-center text-gray-400 text-sm pt-4">
+                  Created by Fin-Sight
+                </div>
+              </>
+            )}
           </section>
         </div>
 
@@ -180,6 +239,13 @@ function App() {
       </main>
 
       <Footer />
+
+      {/* Ad Click Modal */}
+      <AdPickModal
+        isOpen={showAdModal}
+        onClose={() => setShowAdModal(false)}
+        onAdClicked={handleAdClick}
+      />
     </div>
   );
 }
