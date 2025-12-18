@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { LegalModal } from './LegalModal'; // Ensure this file exists
 
 export const Footer = () => {
@@ -20,10 +21,10 @@ export const Footer = () => {
                     <div>
                         <h4 className="font-semibold text-gray-900 mb-4">서비스</h4>
                         <ul className="space-y-2 text-sm text-gray-500">
-                            <li>예금 이자 계산기</li>
-                            <li>적금 이자 계산기</li>
-                            <li>대출 상환 계산기</li>
-                            <li>금융 가이드</li>
+                            <li><Link to="/" className="hover:text-blue-600 transition-colors">예금 이자 계산기</Link></li>
+                            <li><Link to="/" className="hover:text-blue-600 transition-colors">적금 이자 계산기</Link></li>
+                            <li><Link to="/" className="hover:text-blue-600 transition-colors">대출 상환 계산기</Link></li>
+                            <li><Link to="/blog" className="hover:text-blue-600 transition-colors">금융 지식 블로그</Link></li>
                         </ul>
                     </div>
                     <div>
