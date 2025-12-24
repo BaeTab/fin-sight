@@ -12,6 +12,7 @@ import html2canvas from 'html2canvas';
 
 import { analytics } from '../firebase';
 import { logEvent } from 'firebase/analytics';
+import { SEO } from '../components/SEO';
 
 export function Home() {
     const [activeTab, setActiveTab] = useState('savings');
@@ -122,6 +123,24 @@ export function Home() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <SEO
+                title="스마트 금융 계산기 - 예적금/대출 이자 비교"
+                description="예금, 적금, 대출 이자를 한눈에 계산하고 비교해보세요. 복리 효과, 대출 상환 스케줄표 제공. Fin-Sight로 스마트한 자산 관리를 시작하세요."
+                url="/"
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "WebApplication",
+                    "name": "Fin-Sight",
+                    "applicationCategory": "FinanceApplication",
+                    "operatingSystem": "Web",
+                    "description": "스마트한 예적금 및 대출 이자 계산기",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "KRW"
+                    }
+                }}
+            />
             <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
                 <div className="text-center md:text-left space-y-4">
                     <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">

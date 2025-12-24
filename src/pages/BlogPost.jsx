@@ -4,6 +4,7 @@ import { blogPosts } from '../data/blogPosts';
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react';
 import { analytics } from '../firebase';
 import { logEvent } from 'firebase/analytics';
+import { SEO } from '../components/SEO';
 
 export function BlogPost() {
     const { id } = useParams();
@@ -38,6 +39,36 @@ export function BlogPost() {
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <SEO
+                title={post.title}
+                description={post.excerpt}
+                url={`/blog/${post.id}`}
+                type="article"
+                keywords={`${post.category}, 이자 계산, 적금, 대출, 재테크`}
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "BlogPosting",
+                    "headline": post.title, // Title of the post
+                    "description": post.excerpt,
+                    "datePublished": post.date,
+                    "author": {
+                        "@type": "Organization",
+                        "name": "Fin-Sight"
+                    },
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "Fin-Sight",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://interest-calcu.web.app/favicon.png"
+                        }
+                    },
+                    "mainEntityOfPage": {
+                        "@type": "WebPage",
+                        "@id": `https://interest-calcu.web.app/blog/${post.id}`
+                    }
+                }}
+            />
             <button
                 onClick={() => navigate('/blog')}
                 className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors mb-8 group"

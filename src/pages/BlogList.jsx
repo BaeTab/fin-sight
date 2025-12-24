@@ -4,6 +4,7 @@ import { blogPosts } from '../data/blogPosts';
 import { Calendar, Clock, ArrowRight, BookOpen } from 'lucide-react';
 import { analytics } from '../firebase';
 import { logEvent } from 'firebase/analytics';
+import { SEO } from '../components/SEO';
 
 export function BlogList() {
 
@@ -18,6 +19,18 @@ export function BlogList() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <SEO
+                title="금융 블로그 - 재테크, 대출, 자산 관리 꿀팁"
+                description="슬기로운 금융 생활을 위한 유용한 정보를 제공합니다. 복리, 대출, 적금 등 필수 금융 지식을 확인하세요."
+                url="/blog"
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    "name": "Fin-Sight 금융 블로그",
+                    "description": "재테크, 대출, 저축 등 다양한 금융 정보를 제공하는 블로그입니다.",
+                    "url": "https://interest-calcu.web.app/blog"
+                }}
+            />
             <div className="text-center mb-16">
                 <div className="inline-flex items-center justify-center p-3 bg-blue-100 rounded-full mb-4">
                     <BookOpen className="w-8 h-8 text-blue-600" />
